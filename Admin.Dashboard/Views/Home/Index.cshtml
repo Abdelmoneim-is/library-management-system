@@ -1,0 +1,265 @@
+﻿@model Admin.Dashboard.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="lib-page-header mb-4">
+    <h1 class="lib-page-title">Dashboard Overview</h1>
+    <p class="lib-page-subtitle">Welcome back! Here is a live summary of your library system performance.</p>
+</div>
+
+<!-- الصف الأول: البطاقات الأساسية -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm border-start border-primary border-4 py-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Books</div>
+                        <div class="h5 mb-0 fw-bold text-dark">@Model.TotalBooks</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-book fa-2x text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm border-start border-success border-4 py-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">Available Books</div>
+                        <div class="h5 mb-0 fw-bold text-dark">@Model.AvailableBooks</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-check-circle fa-2x text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm border-start border-info border-4 py-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-xs fw-bold text-info text-uppercase mb-1">System Users</div>
+                        <div class="h5 mb-0 fw-bold text-dark">@Model.TotalUsers</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-users fa-2x text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm border-start border-warning border-4 py-2">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Active Borrowings</div>
+                        <div class="h5 mb-0 fw-bold text-dark">@Model.ActiveBorrowings</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-exchange-alt fa-2x text-muted"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- الصف الثاني: الغرامات والإعارات المتأخرة -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-danger border-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Overdue Borrowings</h6>
+                    <h4 class="fw-bold mb-0 text-danger">@Model.OverdueBorrowings</h4>
+                </div>
+                <div class="bg-light p-3 rounded-circle text-danger"><i class="fas fa-exclamation-triangle fa-lg"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-danger border-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Unpaid Fines</h6>
+                    <h4 class="fw-bold mb-0 text-danger">$@Model.TotalUnpaidFines.ToString("N2")</h4>
+                </div>
+                <div class="bg-light p-3 rounded-circle text-danger"><i class="fas fa-file-invoice-dollar fa-lg"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-success border-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Collected Fines</h6>
+                    <h4 class="fw-bold mb-0 text-success">$@Model.TotalPaidFines.ToString("N2")</h4>
+                </div>
+                <div class="bg-light p-3 rounded-circle text-success"><i class="fas fa-hand-holding-usd fa-lg"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-muted mb-1">Categories / Authors</h6>
+                    <h4 class="fw-bold mb-0">@Model.TotalCategories / @Model.TotalAuthors</h4>
+                </div>
+                <div class="bg-light p-3 rounded-circle text-primary"><i class="fas fa-layer-group fa-lg"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- اختصارات الإدارة السريعة -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <i class="fas fa-compass me-1"></i> Quick Management Shortcuts
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3"><a asp-controller="Books" asp-action="Index" class="btn btn-outline-primary w-100 py-2 fw-semibold"><i class="fas fa-book me-2"></i> Manage Books</a></div>
+            <div class="col-md-3"><a asp-controller="Authors" asp-action="Index" class="btn btn-outline-warning w-100 py-2 fw-semibold text-dark"><i class="fas fa-feather-alt me-2"></i> Manage Authors</a></div>
+            <div class="col-md-3"><a asp-controller="Categories" asp-action="Index" class="btn btn-outline-success w-100 py-2 fw-semibold"><i class="fas fa-tags me-2"></i> Manage Categories</a></div>
+            <div class="col-md-3"><a asp-controller="Users" asp-action="Index" class="btn btn-outline-danger w-100 py-2 fw-semibold"><i class="fas fa-users-cog me-2"></i> Manage Users</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- الصف الثالث: جدول الإعارات المتأخرة والـ Chart -->
+<div class="row g-4 mb-4">
+    <!-- جدول الإعارات المتأخرة -->
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-clock me-1"></i> Overdue Borrowings Alerts</span>
+                <span class="badge bg-white text-danger">@Model.RecentOverdueList.Count Pending</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>User</th>
+                                <th>Book Title</th>
+                                <th>Due Date</th>
+                                <th>Fine</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentOverdueList.Any())
+                            {
+                                @foreach (var item in Model.RecentOverdueList)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@item.UserName</td>
+                                        <td>@item.BookTitle</td>
+                                        <td><span class="badge bg-danger">@item.DueDate.ToString("yyyy-MM-dd")</span></td>
+                                        <td class="text-danger fw-bold">$@item.FineAmount.ToString("N2")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" class="text-center py-3 text-muted">No overdue borrowings recorded 🎉</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الرسم البياني للأقسام -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-secondary text-white">
+                <i class="fas fa-chart-pie me-1"></i> Books Category Distribution
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="categoryChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- الصف الرابع: أحدث التقييمات -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-dark text-white">
+        <i class="fas fa-star text-warning me-1"></i> Recent Member Reviews
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentReviewsList.Any())
+                    {
+                        @foreach (var review in Model.RecentReviewsList)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@review.UserName</td>
+                                <td>@review.BookTitle</td>
+                                <td>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-muted opacity-25")"></i>
+                                    }
+                                </td>
+                                <td>@(string.IsNullOrEmpty(review.Comment) ? "No comment" : review.Comment)</td>
+                                <td class="text-muted small">@review.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5" class="text-center py-3 text-muted">No reviews submitted yet.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- مكتبة Chart.js للرسم البياني -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const categoryLabels = @Html.Raw(Json.Serialize(Model.CategoryStats.Select(c => c.CategoryName)));
+        const categoryData = @Html.Raw(Json.Serialize(Model.CategoryStats.Select(c => c.BookCount)));
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    data: categoryData,
+                    backgroundColor: ['#2c3e50', '#18bc9c', '#3498db', '#f39c12', '#e74c3c', '#9b59b6']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+}

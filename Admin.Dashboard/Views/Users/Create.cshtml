@@ -1,0 +1,79 @@
+﻿@model Admin.Dashboard.ViewModels.UserCreateViewModel
+
+@{
+    ViewData["Title"] = "Create New User";
+}
+
+<div class="lib-page-header mb-4">
+    <h1 class="lib-page-title">Create New User</h1>
+    <p class="lib-page-subtitle">Add a new user to the system and assign their role</p>
+</div>
+
+<div class="card shadow-sm col-md-8 mx-auto">
+    <div class="card-header bg-dark text-white">
+        <i class="fas fa-user-plus me-1"></i> User Information
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- حقل الاسم الظاهري (DisplayName) لتفادي خطأ الـ Database -->
+            <div class="mb-3">
+                <label asp-for="DisplayName" class="form-label fw-semibold"></label>
+                <input asp-for="DisplayName" class="form-control" placeholder="e.g. John Doe" />
+                <span asp-validation-for="DisplayName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label fw-semibold"></label>
+                <input asp-for="UserName" class="form-control" placeholder="e.g. john_doe" />
+                <span asp-validation-for="UserName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" placeholder="e.g. john@example.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label fw-semibold"></label>
+                <input asp-for="Password" class="form-control" placeholder="Enter password..." />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. +201234567890" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SelectedRole" class="form-label fw-semibold"></label>
+                <select asp-for="SelectedRole" class="form-select">
+                    <option value="">-- Select Initial Role (Optional) --</option>
+                    @if (ViewBag.RolesList != null)
+                    {
+                        foreach (var role in (List<string>)ViewBag.RolesList)
+                        {
+                            <option value="@role">@role</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a asp-action="Index" class="btn btn-secondary px-4">
+                    <i class="fas fa-arrow-left me-1"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary px-4" style="background-color: #2c3e50; border-color: #2c3e50;">
+                    <i class="fas fa-save me-1"></i> Create User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

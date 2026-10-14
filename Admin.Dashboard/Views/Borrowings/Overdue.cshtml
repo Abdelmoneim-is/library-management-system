@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Admin.Dashboard.ViewModels.LoanViewModel>
+
+@{
+    ViewData["Title"] = "Overdue Loans";
+}
+
+<div class="lib-page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="lib-page-title">Overdue Loans</h1>
+        <p class="lib-page-subtitle">Track loans that have exceeded their due date</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <i class="fas fa-clock me-1"></i> Overdue Transactions List
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User ID</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Fine</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var loan in Model)
+                        {
+                            <tr>
+                                <td><span class="fw-semibold">@loan.BookTitle</span></td>
+                                <td><span class="text-muted">@loan.UserId</span></td>
+                                <td>@loan.BorrowDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-danger fw-bold">@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <span class="badge bg-danger">Overdue</span>
+                                </td>
+                                <td>
+                                    @if (loan.FineAmount > 0)
+                                    {
+                                        <span class="text-danger fw-bold">@loan.FineAmount.ToString("C")</span>
+                                        if (!loan.IsFinePaid)
+                                        {
+                                            <span class="badge bg-danger ms-1">Unpaid</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success ms-1">Paid</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">None</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <span class="text-muted fs-7">-</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No overdue loans found. Excellent!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

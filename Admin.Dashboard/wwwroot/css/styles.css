@@ -1,0 +1,867 @@
+﻿/*
+  Library Admin stylesheet
+  ------------------------
+  Replaces styles.css (SB Admin + a second copy of Bootstrap + simple-datatables) and site.css.
+  Load it AFTER ~/lib/bootstrap/dist/css/bootstrap.min.css.
+  Written to work with Bootstrap 5.1 - 5.3.
+
+  1. Tokens
+  2. Layout core (from SB Admin 7: fixed top bar, collapsible sidebar)
+  3. Theme: base, top bar, sidebar
+  4. Theme: Bootstrap components (buttons, forms, tables, cards, pagination)
+  5. Library components (page header, stat tiles, badges, covers, stars, filters, pager, empty state)
+  6. Login page
+  7. Accessibility and print
+*/
+
+/* ------------------------------------------------------------------ 1. Tokens */
+:root {
+    --lib-ink: #1b2a41; /* top bar and sidebar */
+    --lib-ink-raised: #22344f; /* sidebar footer, hover surfaces on ink */
+    --lib-brass: #b8893b; /* the one accent: active nav marker, ratings */
+
+    --lib-primary: #2f5d8a;
+    --lib-primary-hover: #264e75;
+    --lib-primary-rgb: 47, 93, 138;
+    --lib-bg: #f3f5f8;
+    --lib-surface: #ffffff;
+    --lib-surface-muted: #f7f8fa;
+    --lib-line: #e3e7ed;
+    --lib-line-strong: #cdd4de;
+    --lib-text: #1f2933;
+    --lib-text-muted: #5b6776;
+    /* Loan and fine states. Each pair has at least 5:1 contrast. */
+    --lib-active: #2f5d8a;
+    --lib-active-bg: #e7eef6;
+    --lib-overdue: #9b2c2c;
+    --lib-overdue-bg: #f8e6e6;
+    --lib-returned: #2f6f4f;
+    --lib-returned-bg: #e4f1ea;
+    --lib-fine: #8a5a00;
+    --lib-fine-bg: #fbefd5;
+    --lib-neutral: #4b5563;
+    --lib-neutral-bg: #eceff2;
+    --lib-radius-control: 4px;
+    --lib-radius-panel: 6px;
+}
+
+/* ------------------------------------------------------------------ 2. Layout core */
+html,
+body {
+    height: 100%;
+}
+
+#layoutSidenav {
+    display: flex;
+}
+
+    #layoutSidenav #layoutSidenav_nav {
+        flex-basis: 225px;
+        flex-shrink: 0;
+        transition: transform 0.15s ease-in-out;
+        z-index: 1038;
+        transform: translateX(-225px);
+    }
+
+    #layoutSidenav #layoutSidenav_content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 0;
+        flex-grow: 1;
+        min-height: calc(100vh - 56px);
+        margin-left: -225px;
+    }
+
+.sb-sidenav-toggled #layoutSidenav #layoutSidenav_nav {
+    transform: translateX(0);
+}
+
+.sb-sidenav-toggled #layoutSidenav #layoutSidenav_content::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 1037;
+    opacity: 0.5;
+    transition: opacity 0.3s ease-in-out;
+}
+
+@media (min-width: 992px) {
+    #layoutSidenav #layoutSidenav_nav {
+        transform: translateX(0);
+    }
+
+    #layoutSidenav #layoutSidenav_content {
+        margin-left: 0;
+        transition: margin 0.15s ease-in-out;
+    }
+
+    .sb-sidenav-toggled #layoutSidenav #layoutSidenav_nav {
+        transform: translateX(-225px);
+    }
+
+    .sb-sidenav-toggled #layoutSidenav #layoutSidenav_content {
+        margin-left: -225px;
+    }
+
+        .sb-sidenav-toggled #layoutSidenav #layoutSidenav_content::before {
+            display: none;
+        }
+}
+
+/* body.sb-nav-fixed: top bar and sidebar stay put while the page scrolls */
+.sb-nav-fixed .sb-topnav,
+.sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+.sb-nav-fixed .sb-topnav {
+    z-index: 1039;
+}
+
+.sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
+    width: 225px;
+    height: 100vh;
+    z-index: 1038;
+}
+
+    .sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav {
+        padding-top: 56px;
+    }
+
+        .sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav .sb-sidenav-menu {
+            overflow-y: auto;
+        }
+
+.sb-nav-fixed #layoutSidenav #layoutSidenav_content {
+    padding-left: 225px;
+    top: 56px;
+}
+
+.sb-topnav {
+    padding-left: 0;
+    height: 56px;
+    z-index: 1039;
+}
+
+    .sb-topnav .navbar-brand {
+        width: 225px;
+        margin: 0;
+    }
+
+.sb-sidenav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex-wrap: nowrap;
+}
+
+    .sb-sidenav .sb-sidenav-menu {
+        flex-grow: 1;
+    }
+
+        .sb-sidenav .sb-sidenav-menu .nav {
+            flex-direction: column;
+            flex-wrap: nowrap;
+        }
+
+            .sb-sidenav .sb-sidenav-menu .nav .nav-link {
+                display: flex;
+                align-items: center;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                position: relative;
+            }
+
+                .sb-sidenav .sb-sidenav-menu .nav .nav-link .sb-nav-link-icon {
+                    margin-right: 0.5rem;
+                    font-size: 0.9rem;
+                }
+
+    .sb-sidenav .sb-sidenav-footer {
+        padding: 0.75rem;
+        flex-shrink: 0;
+    }
+
+/* ------------------------------------------------------------------ 3. Theme: base, top bar, sidebar */
+body {
+    background-color: var(--lib-bg);
+    color: var(--lib-text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 0.9375rem;
+}
+
+/* Plain links inside page content (links with a class keep their own colors) */
+#layoutSidenav_content a:not([class]) {
+    color: var(--lib-primary);
+}
+
+    #layoutSidenav_content a:not([class]):hover {
+        color: var(--lib-primary-hover);
+    }
+
+.sb-topnav {
+    background-color: var(--lib-ink);
+}
+
+    .sb-topnav .navbar-brand {
+        font-weight: 600;
+    }
+
+    .sb-topnav.navbar-dark #sidebarToggle {
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+        .sb-topnav.navbar-dark #sidebarToggle:hover {
+            color: #fff;
+        }
+
+.sb-sidenav-dark {
+    background-color: var(--lib-ink);
+    color: rgba(255, 255, 255, 0.72);
+}
+/* Section titles in sentence case, not shouting capitals */
+.sb-sidenav .sb-sidenav-menu .nav .sb-sidenav-menu-heading {
+    padding: 1.5rem 1rem 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.sb-sidenav-dark .sb-sidenav-menu .sb-sidenav-menu-heading {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sb-sidenav-dark .sb-sidenav-menu .nav-link {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+    .sb-sidenav-dark .sb-sidenav-menu .nav-link .sb-nav-link-icon {
+        color: rgba(255, 255, 255, 0.45);
+    }
+
+    .sb-sidenav-dark .sb-sidenav-menu .nav-link:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .sb-sidenav-dark .sb-sidenav-menu .nav-link.active {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+        .sb-sidenav-dark .sb-sidenav-menu .nav-link.active .sb-nav-link-icon {
+            color: var(--lib-brass);
+        }
+
+        .sb-sidenav-dark .sb-sidenav-menu .nav-link.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.375rem;
+            bottom: 0.375rem;
+            width: 3px;
+            background-color: var(--lib-brass);
+            border-radius: 0 2px 2px 0;
+        }
+
+.sb-sidenav-dark .sb-sidenav-footer {
+    background-color: var(--lib-ink-raised);
+}
+
+/* Custom Scrollbar for Dark Sidebar */
+.sb-sidenav-dark .sb-sidenav-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sb-sidenav-dark .sb-sidenav-menu::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sb-sidenav-dark .sb-sidenav-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+    .sb-sidenav-dark .sb-sidenav-menu::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+.lib-footer {
+    background-color: var(--lib-surface);
+    border-top: 1px solid var(--lib-line);
+    color: var(--lib-text-muted);
+}
+
+/* ------------------------------------------------------------------ 4. Theme: Bootstrap components */
+.btn {
+    border-radius: var(--lib-radius-control);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--lib-primary);
+    --bs-btn-border-color: var(--lib-primary);
+    --bs-btn-hover-bg: var(--lib-primary-hover);
+    --bs-btn-hover-border-color: var(--lib-primary-hover);
+    --bs-btn-active-bg: var(--lib-primary-hover);
+    --bs-btn-active-border-color: var(--lib-primary-hover);
+    --bs-btn-disabled-bg: var(--lib-primary);
+    --bs-btn-disabled-border-color: var(--lib-primary);
+    --bs-btn-focus-shadow-rgb: var(--lib-primary-rgb);
+    color: #fff;
+    background-color: var(--lib-primary);
+    border-color: var(--lib-primary);
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active,
+    .btn-primary.active {
+        color: #fff;
+        background-color: var(--lib-primary-hover);
+        border-color: var(--lib-primary-hover);
+    }
+
+    .btn-primary:focus-visible {
+        box-shadow: 0 0 0 0.2rem rgba(var(--lib-primary-rgb), 0.35);
+    }
+
+    .btn-primary:disabled,
+    .btn-primary.disabled {
+        background-color: var(--lib-primary);
+        border-color: var(--lib-primary);
+    }
+
+.btn-outline-primary {
+    --bs-btn-color: var(--lib-primary);
+    --bs-btn-border-color: var(--lib-primary);
+    --bs-btn-hover-bg: var(--lib-primary);
+    --bs-btn-hover-border-color: var(--lib-primary);
+    --bs-btn-active-bg: var(--lib-primary);
+    --bs-btn-active-border-color: var(--lib-primary);
+    color: var(--lib-primary);
+    border-color: var(--lib-primary);
+}
+
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus,
+    .btn-outline-primary:active,
+    .btn-outline-primary.active {
+        color: #fff;
+        background-color: var(--lib-primary);
+        border-color: var(--lib-primary);
+    }
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.375rem;
+}
+
+.form-control,
+.form-select {
+    border-color: var(--lib-line-strong);
+    border-radius: var(--lib-radius-control);
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--lib-primary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--lib-primary-rgb), 0.2);
+    }
+
+.form-check-input:checked {
+    background-color: var(--lib-primary);
+    border-color: var(--lib-primary);
+}
+
+.form-text {
+    color: var(--lib-text-muted);
+}
+
+/* Classes added by ASP.NET validation (tag helpers and unobtrusive validation) */
+.input-validation-error {
+    border-color: var(--lib-overdue) !important;
+}
+
+.field-validation-error {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--lib-overdue);
+    font-size: 0.8125rem;
+}
+
+.validation-summary-errors {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    color: var(--lib-overdue);
+    background-color: var(--lib-overdue-bg);
+    border-radius: var(--lib-radius-control);
+}
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+
+.validation-summary-valid {
+    display: none;
+}
+
+.card {
+    background-color: var(--lib-surface);
+    border: 1px solid var(--lib-line);
+    border-radius: var(--lib-radius-panel);
+    box-shadow: none;
+}
+
+.card-header {
+    background-color: var(--lib-surface);
+    border-bottom: 1px solid var(--lib-line);
+    font-weight: 600;
+}
+
+.card-footer {
+    background-color: var(--lib-surface-muted);
+    border-top: 1px solid var(--lib-line);
+}
+
+.alert {
+    border-radius: var(--lib-radius-panel);
+}
+
+.dropdown-menu {
+    border-color: var(--lib-line);
+    border-radius: var(--lib-radius-panel);
+    box-shadow: 0 6px 18px rgba(27, 42, 65, 0.12);
+}
+
+.table {
+    --bs-table-hover-bg: rgba(var(--lib-primary-rgb), 0.05);
+    --bs-table-border-color: var(--lib-line);
+    border-color: var(--lib-line);
+    vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+}
+
+    .table > :not(:first-child) {
+        border-top: 1px solid var(--lib-line-strong);
+    }
+
+    .table thead th {
+        background-color: var(--lib-surface-muted);
+        color: var(--lib-text-muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.75rem 0.75rem;
+    }
+
+    .table .num {
+        text-align: right;
+    }
+
+/* Table Responsive Container Styling */
+.table-responsive {
+    border: 1px solid var(--lib-line);
+    border-radius: var(--lib-radius-panel);
+    background-color: var(--lib-surface);
+    overflow: hidden;
+}
+
+    .table-responsive .table {
+        margin-bottom: 0;
+        border: none;
+    }
+
+.page-link {
+    color: var(--lib-primary);
+    border-color: var(--lib-line-strong);
+}
+
+    .page-link:hover {
+        color: var(--lib-primary-hover);
+        background-color: var(--lib-surface-muted);
+        border-color: var(--lib-line-strong);
+    }
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: var(--lib-primary);
+    border-color: var(--lib-primary);
+}
+
+.page-item.disabled .page-link {
+    color: var(--lib-text-muted);
+}
+
+/* ------------------------------------------------------------------ 5. Library components */
+
+.lib-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.lib-page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.lib-page-subtitle {
+    margin: 0.125rem 0 0;
+    color: var(--lib-text-muted);
+    font-size: 0.875rem;
+}
+
+.lib-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.lib-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.lib-stat {
+    display: block;
+    padding: 1rem 1.125rem;
+    background-color: var(--lib-surface);
+    border: 1px solid var(--lib-line);
+    border-radius: var(--lib-radius-panel);
+    color: inherit;
+    text-decoration: none;
+}
+
+a.lib-stat:hover {
+    border-color: var(--lib-primary);
+    color: inherit;
+}
+
+.lib-stat-value {
+    display: block;
+    font-size: 1.875rem;
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.lib-stat-label {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--lib-text-muted);
+    font-size: 0.875rem;
+}
+
+.lib-stat--overdue .lib-stat-value {
+    color: var(--lib-overdue);
+}
+
+.lib-stat--fine .lib-stat-value {
+    color: var(--lib-fine);
+}
+
+.lib-badge {
+    --badge-fg: var(--lib-neutral);
+    --badge-bg: var(--lib-neutral-bg);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    color: var(--badge-fg);
+    background-color: var(--badge-bg);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+    .lib-badge::before {
+        content: "";
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+
+.lib-badge--active {
+    --badge-fg: var(--lib-active);
+    --badge-bg: var(--lib-active-bg);
+}
+
+.lib-badge--overdue {
+    --badge-fg: var(--lib-overdue);
+    --badge-bg: var(--lib-overdue-bg);
+}
+
+.lib-badge--returned {
+    --badge-fg: var(--lib-returned);
+    --badge-bg: var(--lib-returned-bg);
+}
+
+.lib-badge--fine {
+    --badge-fg: var(--lib-fine);
+    --badge-bg: var(--lib-fine-bg);
+}
+
+.lib-badge--paid {
+    --badge-fg: var(--lib-neutral);
+    --badge-bg: var(--lib-neutral-bg);
+}
+
+.lib-badge--available {
+    --badge-fg: var(--lib-returned);
+    --badge-bg: var(--lib-returned-bg);
+}
+
+.lib-badge--none {
+    --badge-fg: var(--lib-overdue);
+    --badge-bg: var(--lib-overdue-bg);
+}
+
+.lib-book-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.lib-book-title {
+    font-weight: 600;
+}
+
+.lib-book-meta {
+    color: var(--lib-text-muted);
+    font-size: 0.8125rem;
+}
+
+.lib-cover {
+    flex-shrink: 0;
+    width: 40px;
+    height: 56px;
+    object-fit: cover;
+    background-color: var(--lib-surface-muted);
+    border: 1px solid var(--lib-line-strong);
+    border-radius: 2px;
+}
+
+.lib-cover--lg {
+    width: 140px;
+    height: 196px;
+    border-radius: 3px;
+}
+
+.lib-cover--empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lib-line-strong);
+}
+
+.lib-stars {
+    --rating: 0;
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: 0.125em;
+    white-space: nowrap;
+}
+
+    .lib-stars::before {
+        content: "\2605\2605\2605\2605\2605";
+        background: linear-gradient(90deg, var(--lib-brass) calc(var(--rating) / 5 * 100%), var(--lib-line-strong) 0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+.lib-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--lib-surface);
+    border: 1px solid var(--lib-line);
+    border-radius: var(--lib-radius-panel);
+}
+
+    .lib-filters .form-control,
+    .lib-filters .form-select {
+        min-width: 11rem;
+    }
+
+    .lib-filters .lib-filter-grow {
+        flex: 1 1 16rem;
+    }
+
+.lib-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.375rem;
+    white-space: nowrap;
+}
+
+.lib-pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+    .lib-pager .pagination {
+        margin: 0;
+    }
+
+.lib-pager-info {
+    color: var(--lib-text-muted);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.lib-empty {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--lib-text-muted);
+}
+
+.lib-empty-icon {
+    margin-bottom: 0.75rem;
+    color: var(--lib-line-strong);
+    font-size: 2rem;
+}
+
+.lib-empty-title {
+    margin-bottom: 0.25rem;
+    color: var(--lib-text);
+    font-weight: 600;
+}
+
+.lib-kv {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: 0.625rem 1rem;
+    margin: 0;
+}
+
+    .lib-kv dt {
+        color: var(--lib-text-muted);
+        font-weight: 400;
+    }
+
+    .lib-kv dd {
+        margin: 0;
+    }
+
+@media (max-width: 575.98px) {
+    .lib-kv {
+        grid-template-columns: 1fr;
+        gap: 0.125rem;
+    }
+
+        .lib-kv dd {
+            margin-bottom: 0.75rem;
+        }
+}
+
+/* ------------------------------------------------------------------ 6. Login page */
+.lib-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+    background-color: var(--lib-ink);
+}
+
+.lib-auth-panel {
+    width: 100%;
+    max-width: 24rem;
+    padding: 2rem;
+    background-color: var(--lib-surface);
+    border-radius: var(--lib-radius-panel);
+}
+
+.lib-auth-brand {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ 7. Accessibility and print */
+:focus-visible {
+    outline: 2px solid var(--lib-primary);
+    outline-offset: 2px;
+}
+
+.sb-sidenav :focus-visible,
+.sb-topnav :focus-visible {
+    outline-color: #fff;
+}
+
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+    outline: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #layoutSidenav #layoutSidenav_nav,
+    #layoutSidenav #layoutSidenav_content,
+    .btn,
+    .form-control,
+    .form-select {
+        transition: none !important;
+    }
+}
+
+@media print {
+    .sb-topnav,
+    #layoutSidenav_nav,
+    #layoutSidenav_content > footer,
+    .no-print {
+        display: none !important;
+    }
+
+    .sb-nav-fixed #layoutSidenav #layoutSidenav_content {
+        top: 0;
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    body {
+        background-color: #fff;
+    }
+
+    .card,
+    .lib-stat,
+    tr {
+        break-inside: avoid;
+    }
+}

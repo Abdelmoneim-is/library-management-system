@@ -1,0 +1,176 @@
+﻿@*
+    Admin layout for the Library dashboard.
+    Used by authenticated admin pages only. The login page should use its own layout (or Layout = null).
+*@
+@functions {
+    private string? CurrentController => ViewContext.RouteData.Values["controller"]?.ToString();
+    private string? CurrentAction => ViewContext.RouteData.Values["action"]?.ToString();
+
+    // Returns "active" for the sidebar link that matches the current page.
+    private string Active(string controller, string? action = null) =>
+        string.Equals(CurrentController, controller, StringComparison.OrdinalIgnoreCase)
+        && (action is null || string.Equals(CurrentAction, action, StringComparison.OrdinalIgnoreCase))
+            ? "active"
+            : string.Empty;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Admin_Dashboard.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="sb-nav-fixed">
+
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Index">
+            <i class="fas fa-book-open me-2"></i>Library Admin
+        </a>
+
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <ul class="navbar-nav ms-auto me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user fa-fw"></i>
+                    <span class="d-none d-md-inline ms-1">@User.Identity?.Name</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li>
+                        <form asp-controller="Admin" asp-action="Logout" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt fa-fw me-1"></i>Log out
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+
+                        <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Catalog</div>
+
+                        <a class="nav-link @Active("Books")" asp-controller="Books" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                            Books
+                        </a>
+                        <a class="nav-link @Active("Authors")" asp-controller="Authors" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-feather-alt"></i></div>
+                            Authors
+                        </a>
+                        <a class="nav-link @Active("Categories")" asp-controller="Categories" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
+                            Categories
+                        </a>
+                        <!-- رابط Reviews مضاف تحت Catalog أو ممكن نخليه قسم مستقل -->
+                        <a class="nav-link @Active("Reviews")" asp-controller="Reviews" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+                            Reviews
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Loans</div>
+
+                        <a class="nav-link @Active("Borrowings", "Index")" asp-controller="Borrowings" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-exchange-alt"></i></div>
+                            All loans
+                        </a>
+                        <a class="nav-link @Active("Borrowings", "Overdue")" asp-controller="Borrowings" asp-action="Overdue">
+                            <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
+                            Overdue
+                        </a>
+                        <a class="nav-link @Active("Borrowings", "UnpaidFines")" asp-controller="Borrowings" asp-action="UnpaidFines">
+                            <div class="sb-nav-link-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            Unpaid fines
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Members & Security</div>
+
+                        <a class="nav-link @Active("Users")" asp-controller="Users" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Users
+                        </a>
+                        <a class="nav-link @Active("Roles")" asp-controller="Roles" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                            Roles & Permissions
+                        </a>
+
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Signed in as</div>
+                    @User.Identity?.Name
+                </div>
+            </nav>
+        </div>
+
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4 pt-4 pb-3">
+
+                    <!-- Breadcrumb Navigation -->
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+                        <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                    </ol>
+
+                    @if (TempData["Success"] is string successMessage)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @successMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] is string errorMessage)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @errorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @RenderBody()
+                </div>
+            </main>
+
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="small text-muted">Library Management System &copy; @DateTime.UtcNow.Year</div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('submit', function (e) {
+            var message = e.target.getAttribute('data-confirm');
+            if (message && !window.confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

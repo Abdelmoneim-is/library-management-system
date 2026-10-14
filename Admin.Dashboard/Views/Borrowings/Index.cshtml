@@ -1,0 +1,148 @@
+﻿@model IEnumerable<Admin.Dashboard.ViewModels.LoanViewModel>
+
+@{
+    ViewData["Title"] = "Borrowings Management";
+    var currentSearch = ViewData["CurrentSearch"] as string;
+    var currentFilter = ViewData["CurrentFilter"] as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="lib-page-title">Borrowings Management</h1>
+        <p class="lib-page-subtitle">Track active loans, returns, and overdue books</p>
+    </div>
+    <div>
+        <!-- زرار للوصول السريع لصفحة الغرامات غير المدفوعة -->
+        <a asp-action="UnpaidFines" class="btn btn-outline-danger">
+            <i class="fas fa-money-bill-wave me-1"></i> Unpaid Fines
+        </a>
+    </div>
+</div>
+
+<!-- شريط البحث والفلترة -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="searchQuery" value="@currentSearch" class="form-control" placeholder="Search by book title or user ID..." />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="filterStatus" class="form-select">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentFilter))">All Statuses</option>
+                    <option value="active" selected="@(currentFilter == "active")">Active</option>
+                    <option value="overdue" selected="@(currentFilter == "overdue")">Overdue</option>
+                    <option value="returned" selected="@(currentFilter == "returned")">Returned</option>
+                    <option value="unpaid-fines" selected="@(currentFilter == "unpaid-fines")">Unpaid Fines</option>
+                    <option value="paid-fines" selected="@(currentFilter == "paid-fines")">Paid Fines</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-dark flex-grow-1">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset Filters">
+                    <i class="fas fa-redo"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <i class="fas fa-exchange-alt me-1"></i> All Borrowings List
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User ID</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status / Return Date</th>
+                        <th>Fine Amount</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var borrowing in Model)
+                        {
+                            <tr>
+                                <td><span class="fw-semibold">@borrowing.BookTitle</span></td>
+                                <td><span class="text-muted">@borrowing.UserId</span></td>
+                                <td>@borrowing.BorrowDate.ToString("yyyy-MM-dd")</td>
+                                <td>@borrowing.DueDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (borrowing.IsReturned)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i> Returned (@borrowing.ReturnDate?.ToString("yyyy-MM-dd"))
+                                        </span>
+                                    }
+                                    else if (borrowing.IsOverDue)
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-clock me-1"></i> Overdue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-hourglass-half me-1"></i> Active
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (borrowing.FineAmount > 0)
+                                    {
+                                        <span class="text-danger fw-bold">@borrowing.FineAmount.ToString("C")</span>
+                                        @if (!borrowing.IsFinePaid)
+                                        {
+                                            <span class="badge bg-danger ms-1">Unpaid</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success ms-1">Paid</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">None</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (!borrowing.IsReturned)
+                                    {
+                                        <form asp-action="ReturnBook" asp-route-id="@borrowing.Id" method="post" class="d-inline" data-confirm="Are you sure you want to mark this book as returned?">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success" title="Return Book">
+                                                <i class="fas fa-undo me-1"></i> Return
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Completed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No borrowing records found matching your criteria.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

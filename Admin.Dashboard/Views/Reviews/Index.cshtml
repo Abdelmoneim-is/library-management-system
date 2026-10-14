@@ -1,0 +1,165 @@
+﻿@model IEnumerable<Admin.Dashboard.ViewModels.ReviewViewModel>
+
+@{
+    ViewData["Title"] = "Reviews Management";
+    var currentSearch = ViewData["CurrentSearch"] as string;
+    var currentRating = ViewData["CurrentRating"] as int?;
+    var currentBookId = ViewData["CurrentBookId"] as int?;
+    var currentUserId = ViewData["CurrentUserId"] as string;
+
+    var booksList = ViewBag.Books as List<SelectListItem> ?? new List<SelectListItem>();
+    var usersList = ViewBag.Users as List<SelectListItem> ?? new List<SelectListItem>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="lib-page-title">Reviews Management</h1>
+        <p class="lib-page-subtitle">Monitor and manage all user reviews and book ratings</p>
+    </div>
+    <div>
+        <!-- زرار عرض التقييمات المنخفضة -->
+        <a asp-action="LowRatings" class="btn btn-outline-danger">
+            <i class="fas fa-exclamation-triangle me-1"></i> Low Ratings (1-2 ★)
+        </a>
+        @if (ViewBag.FilterHeader != null || !string.IsNullOrEmpty(currentSearch) || currentRating.HasValue || currentBookId.HasValue || !string.IsNullOrEmpty(currentUserId))
+        {
+            <a asp-action="Index" class="btn btn-secondary ms-1">
+                <i class="fas fa-undo me-1"></i> Show All Reviews
+            </a>
+        }
+    </div>
+</div>
+
+<!-- شريط البحث والفلترة الشامل -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-center">
+
+            <!-- البحث النصي -->
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="searchQuery" value="@currentSearch" class="form-control" placeholder="Search title or comment..." />
+                </div>
+            </div>
+
+            <!-- فلتر النجوم -->
+            <div class="col-md-2">
+                <select name="filterRating" class="form-select">
+                    <option value="" selected="@(!currentRating.HasValue)">All Ratings</option>
+                    <option value="5" selected="@(currentRating == 5)">⭐ 5 Stars</option>
+                    <option value="4" selected="@(currentRating == 4)">⭐ 4 Stars</option>
+                    <option value="3" selected="@(currentRating == 3)">⭐ 3 Stars</option>
+                    <option value="2" selected="@(currentRating == 2)">⭐ 2 Stars</option>
+                    <option value="1" selected="@(currentRating == 1)">⭐ 1 Star</option>
+                </select>
+            </div>
+
+            <!-- فلتر حسب الكتاب -->
+            <div class="col-md-3">
+                <select name="bookId" class="form-select">
+                    <option value="" selected="@(!currentBookId.HasValue)">All Books</option>
+                    @foreach (var book in booksList)
+                    {
+                        <option value="@book.Value" selected="@(currentBookId?.ToString() == book.Value)">@book.Text</option>
+                    }
+                </select>
+            </div>
+
+            <!-- فلتر حسب المستخدم -->
+            <div class="col-md-3">
+                <select name="userId" class="form-select">
+                    <option value="" selected="@(string.IsNullOrEmpty(currentUserId))">All Users</option>
+                    @foreach (var user in usersList)
+                    {
+                        <option value="@user.Value" selected="@(currentUserId == user.Value)">@user.Text</option>
+                    }
+                </select>
+            </div>
+
+            <!-- أزرار التطبيق وإعادة الضبط -->
+            <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                <button type="submit" class="btn btn-dark px-4">
+                    <i class="fas fa-filter me-1"></i> Apply Filters
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary" title="Reset Filters">
+                    <i class="fas fa-redo me-1"></i> Reset
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@if (ViewBag.FilterHeader != null)
+{
+    <div class="alert alert-info d-flex align-items-center justify-content-between mb-4" role="alert">
+        <div>
+            <i class="fas fa-filter me-2"></i><strong>Filter Active:</strong> @ViewBag.FilterHeader
+        </div>
+        <a asp-action="Index" class="btn btn-sm btn-outline-dark">Clear Filter</a>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <i class="fas fa-star me-1"></i> Reviews List
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User ID</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var review in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-action="ByBook" asp-route-bookId="@review.BookId" class="fw-semibold text-decoration-none" title="View all reviews for this book">
+                                        @review.BookTitle
+                                    </a>
+                                </td>
+                                <td>
+                                    <a asp-action="ByUser" asp-route-userId="@review.UserId" class="text-muted text-decoration-none" title="View all reviews by this user">
+                                        <i class="fas fa-user me-1"></i>@review.UserId
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge @(review.Rating <= 2 ? "bg-danger" : "bg-warning text-dark")">
+                                        <i class="fas fa-star"></i> @review.Rating / 5
+                                    </span>
+                                </td>
+                                <td>@review.Comment</td>
+                                <td>@review.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td class="text-end">
+                                    <form asp-action="Delete" asp-route-id="@review.Id" method="post" class="d-inline" data-confirm="Are you sure you want to delete this review?">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Review">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No reviews found for this selection.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

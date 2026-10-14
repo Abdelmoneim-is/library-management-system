@@ -1,0 +1,67 @@
+﻿@model Admin.Dashboard.ViewModels.LoanFormViewModel
+
+@{
+    ViewData["Title"] = "Create New Loan";
+}
+
+<div class="lib-page-header mb-4">
+    <h1 class="lib-page-title">Create New Loan</h1>
+    <p class="lib-page-subtitle">Assign a book to a user for borrowing</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <i class="fas fa-book-reader me-1"></i> Loan Details Form
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserId" class="form-label fw-bold">Select User</label>
+                        <select asp-for="UserId" asp-items="Model.Users" class="form-select">
+                            <option value="">-- Choose User --</option>
+                        </select>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BookId" class="form-label fw-bold">Select Book</label>
+                        <select asp-for="BookId" asp-items="Model.Books" class="form-select">
+                            <option value="">-- Choose Book --</option>
+                        </select>
+                        <span asp-validation-for="BookId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="BorrowDate" class="form-label fw-bold">Borrow Date</label>
+                            <input asp-for="BorrowDate" class="form-control" type="date" />
+                            <span asp-validation-for="BorrowDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DueDate" class="form-label fw-bold">Due Date</label>
+                            <input asp-for="DueDate" class="form-control" type="date" />
+                            <span asp-validation-for="DueDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Create Loan
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,40 @@
+﻿@model Admin.Dashboard.ViewModels.UserRolesViewModel
+
+@{
+    ViewData["Title"] = "Manage User Roles";
+}
+
+<div class="lib-page-header mb-4">
+    <h1 class="lib-page-title">Manage Roles for @Model.UserName</h1>
+    <p class="lib-page-subtitle">Add or remove roles assigned to this user</p>
+</div>
+
+<form asp-action="EditRoles" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="UserName" />
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <i class="fas fa-user-shield me-1"></i> Roles Assignment
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Roles.Count; i++)
+            {
+                <div class="form-check m-2">
+                    <input type="hidden" asp-for="@Model.Roles[i].RoleId" />
+                    <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
+                    <input class="form-check-input" asp-for="@Model.Roles[i].IsSelected" />
+                    <label class="form-check-label fw-semibold" asp-for="@Model.Roles[i].IsSelected">
+                        @Model.Roles[i].RoleName
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="card-footer text-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Save Changes
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</form>

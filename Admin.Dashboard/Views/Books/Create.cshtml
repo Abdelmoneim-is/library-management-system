@@ -1,0 +1,114 @@
+﻿@model Admin.Dashboard.ViewModels.BookFormViewModel
+
+@{
+    ViewData["Title"] = "Add New Book";
+}
+
+<div class="lib-page-header">
+    <div>
+        <h1 class="lib-page-title">Add New Book</h1>
+        <p class="lib-page-subtitle">Fill in the details to add a new book to the library catalog</p>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label asp-for="Title" class="form-label fw-semibold"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter book title" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="ISBN" class="form-label fw-semibold"></label>
+                    <input asp-for="ISBN" class="form-control" placeholder="Enter ISBN" />
+                    <span asp-validation-for="ISBN" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AuthorId" class="form-label fw-semibold"></label>
+                    <select asp-for="AuthorId" asp-items="Model.Authors" class="form-select">
+                        <option value="">-- Select Author --</option>
+                    </select>
+                    <span asp-validation-for="AuthorId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CategoryId" class="form-label fw-semibold"></label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Publisher" class="form-label fw-semibold"></label>
+                    <input asp-for="Publisher" class="form-control" placeholder="Publisher name" />
+                    <span asp-validation-for="Publisher" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="PublishedYear" class="form-label fw-semibold"></label>
+                    <input asp-for="PublishedYear" class="form-control" />
+                    <span asp-validation-for="PublishedYear" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Language" class="form-label fw-semibold"></label>
+                    <input asp-for="Language" class="form-control" placeholder="e.g. English, Arabic" />
+                    <span asp-validation-for="Language" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PageCount" class="form-label fw-semibold"></label>
+                    <input asp-for="PageCount" class="form-control" />
+                    <span asp-validation-for="PageCount" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TotalCopies" class="form-label fw-semibold"></label>
+                    <input asp-for="TotalCopies" class="form-control" />
+                    <span asp-validation-for="TotalCopies" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CoverImageURL" class="form-label fw-semibold"></label>
+                <input asp-for="CoverImageURL" class="form-control" placeholder="Image URL (optional)" />
+                <span asp-validation-for="CoverImageURL" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-semibold"></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter book description..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary px-4" style="background-color: #2c3e50; border-color: #2c3e50;">Save Book</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

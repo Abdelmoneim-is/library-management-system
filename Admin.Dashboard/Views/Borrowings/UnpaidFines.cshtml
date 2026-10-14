@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Admin.Dashboard.ViewModels.LoanViewModel>
+
+@{
+    ViewData["Title"] = "Unpaid Fines Management";
+}
+
+<div class="lib-page-header mb-4">
+    <h1 class="lib-page-title">Unpaid Fines</h1>
+    <p class="lib-page-subtitle">Track and settle pending fines for overdue books</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-danger text-white">
+        <i class="fas fa-money-bill-wave me-1"></i> Unpaid Fines List
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User ID</th>
+                        <th>Due Date</th>
+                        <th>Fine Amount</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var loan in Model)
+                        {
+                            <tr>
+                                <td><span class="fw-semibold">@loan.BookTitle</span></td>
+                                <td><span class="text-muted">@loan.UserId</span></td>
+                                <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <span class="fw-bold text-danger">@loan.FineAmount.ToString("C")</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">Unpaid Fine</span>
+                                </td>
+                                <td class="text-end">
+                                    <!-- فورم دفع الغرامة موجه بدقة لـ Borrowings/PayFine -->
+                                    <form asp-controller="Borrowings" asp-action="PayFine" asp-route-id="@loan.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check-circle me-1"></i> Pay Fine
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No unpaid fines found. Great job! 🎉</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
