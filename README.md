@@ -7,14 +7,8 @@ A complete library system: a REST API for the catalog, borrowing and members, pl
 ![Auth](https://img.shields.io/badge/Auth-Identity%20%2B%20JWT-2f5d8a)
 ![Architecture](https://img.shields.io/badge/Architecture-Clean-b8893b)
 
-## Demo
 
-<!-- Replace the link below after you upload the video -->
-- Video walkthrough: **[add your YouTube / Release link here]**
 
-| Dashboard | Books | Borrowings |
-|---|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Books](docs/screenshots/books.png) | ![Borrowings](docs/screenshots/borrowings.png) |
 
 ## Features
 
@@ -152,10 +146,10 @@ Migrations are applied on startup. To create a new one:
 
 ```bash
 # Catalog database
-dotnet ef migrations add <Name> --context StoreDbContext --project LibraryInfrastructure --startup-project LibraryApi
+dotnet ef migrations add  --context StoreDbContext --project LibraryInfrastructure --startup-project LibraryApi
 
 # Identity database
-dotnet ef migrations add <Name> --context StoreIdentityDbContext --project LibraryInfrastructure --startup-project LibraryApi --output-dir Migrations/Identity
+dotnet ef migrations add  --context StoreIdentityDbContext --project LibraryInfrastructure --startup-project LibraryApi --output-dir Migrations/Identity
 ```
 
 Always open the generated file and check it before running the app.
